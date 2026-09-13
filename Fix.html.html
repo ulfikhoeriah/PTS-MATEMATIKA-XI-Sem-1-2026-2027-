@@ -1,0 +1,1022 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ujian PTS Matematika - SMA Terpadu Bandung</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Polyfill untuk kompatibilitas browser lama -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <!-- MathJax untuk render rumus matematika -->
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)']],
+                displayMath: [['\\[', '\\]']]
+            },
+            svg: { fontCache: 'global' }
+        };
+    </script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+            color: #1f2937;
+            user-select: none; /* Mencegah copy-paste text */
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+        }
+        
+        .hidden { display: none !important; }
+        
+        /* Glassmorphism Panel */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Animasi Peringatan Merah */
+        .alert-pulse {
+            animation: pulse-red 2s infinite;
+            border: 2px solid rgba(220, 38, 38, 0.5);
+        }
+        @keyframes pulse-red {
+            0% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.6); }
+            70% { box-shadow: 0 0 0 15px rgba(220, 38, 38, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0); }
+        }
+
+        /* Custom Radio Button */
+        .radio-custom:checked + div {
+            background-color: #f0fdf4;
+            border-color: #10b981;
+            box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.1);
+        }
+        .radio-custom:checked + div .radio-circle {
+            background-color: #10b981;
+            border-color: #10b981;
+        }
+
+        /* Navigasi Soal */
+        .nav-btn { transition: all 0.2s ease; }
+        .nav-btn.answered { 
+            background-color: #10b981; 
+            color: white; 
+            border-color: #10b981; 
+        }
+        .nav-btn.active { 
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.4); 
+            border-color: #3b82f6; 
+            background-color: #3b82f6; 
+            color: white;
+        }
+
+        /* Peringatan Cheat Layar Penuh */
+        #cheatScreen {
+            backdrop-filter: blur(8px);
+        }
+        
+        /* Styling untuk gambar/SVG dalam soal */
+        .math-image {
+            max-width: 100%;
+            height: auto;
+            margin: 15px auto;
+            display: block;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            background: white;
+            padding: 10px;
+        }
+        
+        /* Animasi Loading */
+        .loader {
+            border: 4px solid rgba(255,255,255,0.1);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border-left-color: #3b82f6;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col antialiased">
+
+    <div id="warningScreen" class="fixed inset-0 z-50 flex items-center justify-center bg-red-900 transition-opacity duration-300 p-4">
+        <div class="glass-panel p-8 md:p-10 rounded-2xl max-w-lg w-full text-center alert-pulse relative overflow-hidden">
+            <!-- Background pattern -->
+            <div class="absolute inset-0 opacity-5 pointer-events-none" style="background-image: repeating-linear-gradient(45deg, #000 0, #000 2px, transparent 2px, transparent 10px);"></div>
+            
+            <div class="relative z-10">
+                <div class="mx-auto flex items-center justify-center h-20 w-20 rounded-full bg-red-100 mb-6 shadow-inner">
+                    <svg class="h-10 w-10 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                </div>
+                <h1 class="text-3xl font-extrabold text-red-700 mb-2 tracking-tight">PERINGATAN KERAS!</h1>
+                <h2 class="text-lg font-semibold text-gray-700 mb-6 border-b pb-4">Ujian Matematika - Ibu Ulfi Khoeriah, S.Pd</h2>
+                
+                <p class="text-gray-700 mb-6 text-sm md:text-base leading-relaxed text-justify bg-red-50 p-4 rounded-lg border border-red-100">
+                    Sistem ujian ini diawasi ketat secara digital. <strong>Sistem akan mencatat jika Anda keluar dari halaman, membuka tab baru, atau mencoba memotret soal.</strong> Segala bentuk kecurangan berakibat pada <strong>pembatalan nilai ujian (NILAI 0)</strong>.
+                    <br><br>
+                    <span class="italic text-red-800 font-medium">"Kejujuran adalah perhiasan jiwa yang lebih bersinar daripada nilai seratus hasil kecurangan."</span>
+                </p>
+                
+                <div class="mb-8 flex items-start text-left bg-gray-50 p-4 rounded-lg border border-gray-300 shadow-sm hover:bg-gray-100 transition cursor-pointer" onclick="document.getElementById('jujurCheckbox').click()">
+                    <input type="checkbox" id="jujurCheckbox" class="mt-1 mr-3 h-5 w-5 text-blue-600 focus:ring-blue-500 border-gray-400 rounded cursor-pointer" onclick="event.stopPropagation()">
+                    <label for="jujurCheckbox" class="text-sm text-gray-800 font-bold cursor-pointer">
+                        SAYA BERJANJI akan mengerjakan ujian ini dengan JURUR, MANDIRI, dan TANPA KECURANGAN.
+                    </label>
+                </div>
+                
+                <button onclick="acceptWarning()" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-4 px-4 rounded-xl transition duration-200 shadow-lg transform hover:-translate-y-1">
+                    SAYA MENGERTI & BERJANJI
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="loginScreen" class="hidden flex-grow flex items-center justify-center p-4 bg-gradient-to-br from-blue-50 via-white to-indigo-50 relative">
+        <!-- Dekorasi latar belakang -->
+        <div class="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
+            <div class="absolute -top-24 -right-24 w-96 h-96 bg-blue-200 rounded-full mix-blend-multiply filter blur-3xl opacity-50"></div>
+            <div class="absolute -bottom-24 -left-24 w-72 h-72 bg-indigo-200 rounded-full mix-blend-multiply filter blur-3xl opacity-50"></div>
+        </div>
+
+        <div class="glass-panel p-8 rounded-3xl max-w-md w-full shadow-2xl relative z-10 border-t-4 border-blue-500">
+            <div class="text-center mb-8">
+                <div class="inline-block p-3 bg-blue-100 rounded-full mb-3">
+                    <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                </div>
+                <h1 class="text-2xl font-bold text-gray-800">PTS MATEMATIKA XI</h1>
+                <p class="text-gray-600 text-sm mt-1 font-medium">SMA Terpadu Bandung</p>
+                <p class="text-blue-600 text-xs font-bold mt-1 bg-blue-50 inline-block px-3 py-1 rounded-full">Guru: Ulfi Khoeriah, S.Pd</p>
+            </div>
+            
+            <form id="loginForm" onsubmit="startExam(event)">
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="nama">Nama Lengkap</label>
+                    <input class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition duration-200 shadow-sm" id="nama" type="text" placeholder="Masukkan nama lengkap sesuai absen" required autocomplete="off">
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <label class="block text-gray-700 text-sm font-bold mb-2" for="kelas">Kelas</label>
+                        <select class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition duration-200 bg-white shadow-sm" id="kelas" required>
+                            <option value="" disabled selected>Pilih Kelas</option>
+                            <option value="XI Informatika 1">XI Informatika 1</option>
+                            <option value="XI Informatika 2">XI Informatika 2</option>
+                            <option value="XI Biologi">XI Biologi</option>
+                            <option value="XI Kimia">XI Kimia</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 text-sm font-bold mb-2" for="absen">No. Absen</label>
+                        <input class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition duration-200 shadow-sm" id="absen" type="number" min="1" max="50" placeholder="Cth: 12" required>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="paket">Paket Soal</label>
+                    <select class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition duration-200 bg-white shadow-sm" id="paket" required>
+                        <option value="" disabled selected>Pilih Paket (A/B)</option>
+                        <option value="A">Paket A</option>
+                        <option value="B">Paket B</option>
+                    </select>
+                </div>
+
+                <div class="mb-8 relative">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="token">Token Ujian</label>
+                    <input class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition duration-200 shadow-sm font-mono text-center tracking-widest uppercase bg-gray-50" id="token" type="password" placeholder="Masukkan Token" required>
+                    <p class="text-xs text-gray-500 mt-2 text-center">*Mintalah token dari pengawas ujian</p>
+                </div>
+
+                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 px-4 rounded-xl transition duration-300 shadow-lg shadow-blue-500/30 flex justify-center items-center group">
+                    <span>Mulai Mengerjakan</span>
+                    <svg class="w-5 h-5 ml-2 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div id="examScreen" class="hidden flex-col min-h-screen bg-gray-50">
+        <!-- Header -->
+        <header class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-40">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+                <div class="flex items-center space-x-4">
+                    <div class="bg-blue-100 p-2 rounded-lg hidden sm:block">
+                        <svg class="w-6 h-6 text-blue-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                    </div>
+                    <div>
+                        <h2 class="font-bold text-gray-800 text-lg">PTS Matematika - Paket <span id="displayPaket" class="text-blue-600"></span></h2>
+                        <p class="text-xs text-gray-500 font-medium tracking-wide" id="displayNamaKelas"></p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-2 bg-red-50 px-4 py-2 rounded-xl border border-red-200 shadow-sm">
+                    <svg class="w-5 h-5 text-red-500 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <span id="timer" class="font-bold text-red-600 text-lg tabular-nums">35:00</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="flex-grow max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 py-6 flex flex-col lg:flex-row gap-6 w-full relative">
+            
+            <!-- Area Soal -->
+            <div class="w-full lg:w-3/4 flex flex-col">
+                <div class="glass-panel p-6 md:p-10 rounded-2xl flex-grow mb-6 relative shadow-sm border border-gray-200 bg-white">
+                    <div class="flex justify-between items-center mb-6 border-b border-gray-100 pb-4">
+                        <div class="flex items-center space-x-3">
+                            <span class="bg-blue-600 text-white w-10 h-10 flex items-center justify-center rounded-xl font-bold text-xl shadow-md">
+                                <span id="questionNumberDisplay">1</span>
+                            </span>
+                            <h3 class="text-lg font-bold text-gray-700">Soal Pilihan Ganda</h3>
+                        </div>
+                        <div class="flex flex-col items-end">
+                            <span id="questionDifficulty" class="px-3 py-1 rounded-full text-xs font-bold tracking-wide">Sedang</span>
+                            <span id="questionWeight" class="text-[10px] text-gray-400 mt-1 font-semibold"></span>
+                        </div>
+                    </div>
+                    
+                    <div id="questionContent" class="text-base md:text-lg text-gray-800 mb-8 leading-relaxed font-medium">
+                        <!-- Teks soal dimuat di sini -->
+                    </div>
+
+                    <div id="optionsContainer" class="space-y-3">
+                        <!-- Pilihan ganda dimuat di sini -->
+                    </div>
+                </div>
+
+                <!-- Tombol Navigasi -->
+                <div class="flex justify-between items-center mt-auto">
+                    <button onclick="prevQuestion()" id="btnPrev" class="flex items-center px-6 py-3 bg-white border border-gray-300 rounded-xl text-gray-700 font-bold hover:bg-gray-50 hover:text-blue-600 transition shadow-sm disabled:opacity-50 disabled:cursor-not-allowed">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                        Sebelumnya
+                    </button>
+                    <button onclick="nextQuestion()" id="btnNext" class="flex items-center px-6 py-3 bg-blue-600 border border-transparent rounded-xl text-white font-bold hover:bg-blue-700 transition shadow-md shadow-blue-500/30">
+                        Selanjutnya
+                        <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Sidebar Navigasi Kotak -->
+            <div class="w-full lg:w-1/4">
+                <div class="bg-white p-6 rounded-2xl sticky top-24 border border-gray-200 shadow-sm">
+                    <h3 class="font-bold text-gray-800 mb-4 flex items-center">
+                        <svg class="w-5 h-5 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                        Peta Soal
+                    </h3>
+                    <div id="navigationGrid" class="grid grid-cols-5 gap-2 mb-6">
+                        <!-- Grid nomor soal -->
+                    </div>
+                    
+                    <div class="border-t border-gray-100 pt-5 mt-2">
+                        <div class="flex items-center justify-between text-xs text-gray-500 mb-2">
+                            <span class="flex items-center"><div class="w-3 h-3 rounded bg-emerald-500 mr-2"></div> Dijawab</span>
+                            <span id="countAnswered" class="font-bold text-gray-700">0</span>
+                        </div>
+                        <div class="flex items-center justify-between text-xs text-gray-500 mb-6">
+                            <span class="flex items-center"><div class="w-3 h-3 rounded border-2 border-gray-300 mr-2"></div> Belum</span>
+                            <span id="countUnanswered" class="font-bold text-gray-700">15</span>
+                        </div>
+                        
+                        <button onclick="confirmSubmit()" id="btnSubmit" class="w-full bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 font-bold py-3 px-4 rounded-xl transition duration-200 flex items-center justify-center">
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            SELESAI UJIAN
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Screen Loading / Menyimpan Jawaban -->
+    <div id="loadingScreen" class="hidden flex-grow flex items-center justify-center p-4 bg-gray-900 text-white relative">
+        <div class="text-center">
+            <div class="loader mx-auto mb-4"></div>
+            <h2 class="text-xl font-bold mb-2">Menyimpan Jawaban...</h2>
+            <p class="text-gray-400 text-sm">Mohon tunggu, sedang mengirim data ke Spreadsheet Ibu Ulfi.</p>
+        </div>
+    </div>
+
+    <div id="resultScreen" class="hidden flex-grow flex items-center justify-center p-4 bg-gray-900 text-white relative overflow-hidden">
+        <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-blue-900 via-gray-900 to-black z-0"></div>
+        <div class="glass-panel bg-opacity-10 bg-gray-800 border-gray-700 p-10 rounded-3xl max-w-md w-full text-center shadow-2xl relative z-10">
+            <svg class="w-24 h-24 mx-auto text-emerald-400 mb-6 drop-shadow-[0_0_15px_rgba(52,211,153,0.5)]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            <h1 class="text-3xl font-bold mb-2">Ujian Selesai!</h1>
+            <p class="text-gray-400 mb-8 text-sm">Terima kasih <span id="resName" class="font-semibold text-white"></span>, jawaban telah terekam di sistem server Ibu Ulfi.</p>
+            
+            <div class="bg-gray-800/80 p-6 rounded-2xl border border-gray-600 mb-6 relative overflow-hidden group">
+                <div class="absolute inset-0 bg-blue-500/10 transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-500"></div>
+                <p class="text-xs text-gray-400 uppercase tracking-widest mb-1 relative z-10">Skor Akhir Anda</p>
+                <p class="text-7xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-400 relative z-10" id="resScore">0</p>
+            </div>
+            
+            <p class="text-xs text-gray-500 mt-8">Sistem anti-cheat telah dimatikan. Anda boleh menutup tab ini.</p>
+        </div>
+    </div>
+
+    <!-- Modal Peringatan Tab Berpindah (Anti Cheat) -->
+    <div id="cheatWarningModal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-red-900 bg-opacity-90 backdrop-blur-sm p-4">
+        <div class="bg-white p-8 rounded-2xl max-w-sm w-full text-center shadow-2xl border-4 border-red-500 transform transition-transform scale-110">
+            <svg class="w-20 h-20 text-red-600 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+            <h2 class="text-2xl font-black text-red-700 mb-2">PELANGGARAN!</h2>
+            <p class="text-gray-700 mb-6 text-sm font-medium">Sistem mendeteksi Anda keluar dari halaman ujian. Tindakan ini tercatat di server. Jika diulangi, ujian akan otomatis diselesaikan dengan nilai 0.</p>
+            <button onclick="dismissCheatWarning()" class="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-xl w-full">SAYA TIDAK AKAN MENGULANGI</button>
+        </div>
+    </div>
+
+    <script>
+        // =========================================================================
+        // PENGATURAN KONEKSI GOOGLE SPREADSHEET
+        // GANTI LINK DI BAWAH INI DENGAN URL WEB APP GOOGLE SCRIPT ANDA
+        // =========================================================================
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwgp5nT19BJfSgYciZ944AxmI7-ca3N79HAKspRQFJp6w9T1aRcJGUA2YUWb8YzhMWkmA/exec"; 
+        
+
+        // =========================================================================
+        // SVG ASSETS UNTUK GRAFIK/GAMBAR SOAL
+        // =========================================================================
+        const svgRelasi1 = `<svg class="math-image" viewBox="0 0 200 120" width="200"><rect x="10" y="10" width="60" height="100" rx="30" fill="#eff6ff" stroke="#3b82f6" stroke-width="2"/><rect x="130" y="10" width="60" height="100" rx="30" fill="#f0fdf4" stroke="#10b981" stroke-width="2"/><text x="40" y="30" text-anchor="middle" font-size="12" font-weight="bold">A</text><text x="160" y="30" text-anchor="middle" font-size="12" font-weight="bold">B</text><circle cx="40" cy="50" r="3" fill="#374151"/><text x="25" y="54" font-size="12">a</text><circle cx="40" cy="70" r="3" fill="#374151"/><text x="25" y="74" font-size="12">b</text><circle cx="40" cy="90" r="3" fill="#374151"/><text x="25" y="94" font-size="12">c</text><circle cx="160" cy="50" r="3" fill="#374151"/><text x="175" y="54" font-size="12">1</text><circle cx="160" cy="70" r="3" fill="#374151"/><text x="175" y="74" font-size="12">2</text><circle cx="160" cy="90" r="3" fill="#374151"/><text x="175" y="94" font-size="12">3</text><line x1="45" y1="50" x2="155" y2="70" stroke="#4b5563" stroke-width="1.5" marker-end="url(#arrow)"/><line x1="45" y1="70" x2="155" y2="50" stroke="#4b5563" stroke-width="1.5" marker-end="url(#arrow)"/><line x1="45" y1="90" x2="155" y2="90" stroke="#4b5563" stroke-width="1.5" marker-end="url(#arrow)"/><defs><marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="4" markerHeight="4" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#4b5563"/></marker></defs></svg>`;
+        
+        const svgRelasi2 = `<svg class="math-image" viewBox="0 0 200 120" width="200"><rect x="10" y="10" width="60" height="100" rx="30" fill="#eff6ff" stroke="#3b82f6" stroke-width="2"/><rect x="130" y="10" width="60" height="100" rx="30" fill="#f0fdf4" stroke="#10b981" stroke-width="2"/><text x="40" y="30" text-anchor="middle" font-size="12" font-weight="bold">A</text><text x="160" y="30" text-anchor="middle" font-size="12" font-weight="bold">B</text><circle cx="40" cy="60" r="3" fill="#374151"/><text x="25" y="64" font-size="12">1</text><circle cx="40" cy="80" r="3" fill="#374151"/><text x="25" y="84" font-size="12">2</text><circle cx="160" cy="50" r="3" fill="#374151"/><text x="175" y="54" font-size="12">a</text><circle cx="160" cy="70" r="3" fill="#374151"/><text x="175" y="74" font-size="12">b</text><circle cx="160" cy="90" r="3" fill="#374151"/><text x="175" y="94" font-size="12">c</text><line x1="45" y1="60" x2="155" y2="50" stroke="#4b5563" stroke-width="1.5" marker-end="url(#arrow)"/><line x1="45" y1="80" x2="155" y2="70" stroke="#4b5563" stroke-width="1.5" marker-end="url(#arrow)"/></svg>`;
+
+        const svgGrafikLinear = `<svg class="math-image" viewBox="0 0 200 200" width="200"><line x1="20" y1="100" x2="180" y2="100" stroke="#000" stroke-width="1"/><line x1="100" y1="20" x2="100" y2="180" stroke="#000" stroke-width="1"/><text x="185" y="105" font-size="10">X</text><text x="95" y="15" font-size="10">Y</text><line x1="20" y1="180" x2="180" y2="20" stroke="#2563eb" stroke-width="2"/><circle cx="100" cy="100" r="2" fill="#000"/><text x="105" y="115" font-size="10">0</text><circle cx="60" cy="100" r="3" fill="#ef4444"/><text x="50" y="115" font-size="10">-2</text><circle cx="100" cy="60" r="3" fill="#ef4444"/><text x="105" y="55" font-size="10">2</text></svg>`;
+
+        const svgGrafikKuadrat = `<svg class="math-image" viewBox="0 0 200 200" width="200"><line x1="20" y1="100" x2="180" y2="100" stroke="#000" stroke-width="1"/><line x1="100" y1="20" x2="100" y2="180" stroke="#000" stroke-width="1"/><path d="M 40 40 Q 100 200 160 40" fill="none" stroke="#2563eb" stroke-width="2"/><circle cx="100" cy="100" r="2" fill="#000"/><text x="105" y="95" font-size="10">0</text><line x1="95" y1="140" x2="105" y2="140" stroke="#000" stroke-width="1"/><text x="110" y="145" font-size="10">-4</text><circle cx="100" cy="140" r="3" fill="#ef4444"/></svg>`;
+
+        // =========================================================================
+        // DATABASE SOAL 
+        // =========================================================================
+        const bankSoal = [
+            {
+                paket: 'A', tipe: 'Mudah', bobot: 1,
+                teks: "Relasi adalah suatu aturan yang memasangkan anggota suatu himpunan dengan anggota himpunan yang lain. Berdasarkan definisi tersebut, perbedaan mendasar antara relasi dan fungsi terletak pada ....",
+                opsi: [
+                    "pada fungsi, setiap anggota domain harus dipasangkan dengan tepat satu anggota kodomain, sedangkan pada relasi tidak harus demikian",
+                    "relasi hanya berlaku untuk bilangan real, sedangkan fungsi berlaku untuk semua jenis himpunan",
+                    "fungsi tidak memiliki domain, sedangkan relasi memiliki domain",
+                    "relasi selalu digambarkan dengan diagram Kartesius, sedangkan fungsi selalu dengan diagram panah",
+                    "tidak ada perbedaan antara relasi dan fungsi"
+                ],
+                kunci: "pada fungsi, setiap anggota domain harus dipasangkan dengan tepat satu anggota kodomain, sedangkan pada relasi tidak harus demikian"
+            },
+            {
+                paket: 'A', tipe: 'Mudah', bobot: 1,
+                teks: "Diketahui himpunan \\( A = \\{1, 2, 3, 4\\} \\) dan \\( B = \\{2, 4, 6, 8, 10\\} \\). Relasi “setengah dari” yang memasangkan himpunan A ke himpunan B dinyatakan dengan himpunan pasangan berurutan ....",
+                opsi: [
+                    "\\( \\{(1, 2), (2, 4), (3, 6), (4, 8)\\} \\)",
+                    "\\( \\{(2, 1), (4, 2), (6, 3), (8, 4)\\} \\)",
+                    "\\( \\{(1, 2), (2, 2), (3, 2), (4, 2)\\} \\)",
+                    "\\( \\{(1, 1), (2, 2), (3, 3), (4, 4)\\} \\)",
+                    "\\( \\{(2, 4), (4, 8), (6, 12), (8, 16)\\} \\)"
+                ],
+                kunci: "\\( \\{(1, 2), (2, 4), (3, 6), (4, 8)\\} \\)"
+            },
+            {
+                paket: 'A', tipe: 'Sedang', bobot: 2,
+                teks: "Perhatikan diagram panah relasi dari himpunan A ke himpunan B berikut. <br>" + svgRelasi1 + "<br>Apakah diagram di atas merupakan fungsi? Mengapa?",
+                opsi: [
+                    "Ya, karena setiap anggota himpunan A dipasangkan tepat satu dengan anggota himpunan B",
+                    "Bukan, karena ada anggota himpunan B yang memiliki dua pasangan",
+                    "Ya, karena semua anggota B memiliki pasangan",
+                    "Bukan, karena ada anggota A yang tidak memiliki pasangan",
+                    "Bukan, karena anggota A bercabang"
+                ],
+                kunci: "Ya, karena setiap anggota himpunan A dipasangkan tepat satu dengan anggota himpunan B"
+            },
+            {
+                paket: 'A', tipe: 'Mudah', bobot: 1,
+                teks: "Berdasarkan diagram panah pada soal sebelumnya, himpunan yang disebut domain adalah ....",
+                opsi: [
+                    "\\( \\{a, b, c\\} \\)",
+                    "\\( \\{1, 2, 3\\} \\)",
+                    "\\( \\{2, 3\\} \\)",
+                    "\\( \\{a, b, c, 1, 2, 3\\} \\)",
+                    "himpunan B"
+                ],
+                kunci: "\\( \\{a, b, c\\} \\)"
+            },
+            {
+                paket: 'A', tipe: 'Mudah', bobot: 1,
+                teks: "Diketahui \\( f(x) = 3x - 5 \\). Nilai dari \\( f(-2) \\) adalah ....",
+                opsi: ["-11", "-8", "-1", "1", "11"],
+                kunci: "-11"
+            },
+            {
+                paket: 'A', tipe: 'Sedang', bobot: 2,
+                teks: "Diketahui \\( f(x) = 2x + 1 \\) dan \\( g(x) = x^2 - 2x \\). Nilai dari \\( f(3) - g(2) \\) adalah ....",
+                opsi: ["7", "5", "6", "8", "9"],
+                kunci: "7"
+            },
+            {
+                paket: 'A', tipe: 'Sedang', bobot: 2,
+                teks: "Perhatikan grafik fungsi linear berikut.<br>" + svgGrafikLinear + "<br>Rumus fungsi yang sesuai dengan grafik tersebut adalah ....",
+                opsi: [
+                    "\\( f(x) = x + 2 \\)",
+                    "\\( f(x) = 2x + 2 \\)",
+                    "\\( f(x) = 2x - 2 \\)",
+                    "\\( f(x) = 3x + 2 \\)",
+                    "\\( f(x) = -2x + 2 \\)"
+                ],
+                kunci: "\\( f(x) = x + 2 \\)"
+            },
+            {
+                paket: 'A', tipe: 'HOTS', bobot: 3,
+                teks: "Koordinat titik puncak grafik fungsi kuadrat \\( f(x) = x^2 - 4x + 3 \\) adalah ....",
+                opsi: [
+                    "\\( (2, -1) \\)",
+                    "\\( (-2, -1) \\)",
+                    "\\( (2, 1) \\)",
+                    "\\( (-2, 1) \\)",
+                    "\\( (4, -1) \\)"
+                ],
+                kunci: "\\( (2, -1) \\)"
+            },
+            {
+                paket: 'A', tipe: 'Sedang', bobot: 2,
+                teks: "Domain dari fungsi \\( f(x) = \\sqrt{x - 3} \\) adalah ....",
+                opsi: [
+                    "\\( \\{x \\mid x \\ge 3, x \\in \\mathbb{R}\\} \\)",
+                    "\\( \\{x \\mid x \\le 3, x \\in \\mathbb{R}\\} \\)",
+                    "\\( \\{x \\mid x > 3, x \\in \\mathbb{R}\\} \\)",
+                    "\\( \\{x \\mid x \\ge -3, x \\in \\mathbb{R}\\} \\)",
+                    "\\( \\{x \\mid x \\in \\mathbb{R}\\} \\)"
+                ],
+                kunci: "\\( \\{x \\mid x \\ge 3, x \\in \\mathbb{R}\\} \\)"
+            },
+            {
+                paket: 'A', tipe: 'HOTS', bobot: 3,
+                teks: "Perhatikan grafik fungsi kuadrat berikut.<br>" + svgGrafikKuadrat + "<br>Range dari fungsi yang grafiknya ditunjukkan adalah ....",
+                opsi: [
+                    "\\( \\{y \\mid y \\ge -4, y \\in \\mathbb{R}\\} \\)",
+                    "\\( \\{y \\mid y \\ge -3, y \\in \\mathbb{R}\\} \\)",
+                    "\\( \\{y \\mid y \\le -4, y \\in \\mathbb{R}\\} \\)",
+                    "\\( \\{y \\mid y \\ge 1, y \\in \\mathbb{R}\\} \\)",
+                    "\\( \\{y \\mid y \\in \\mathbb{R}\\} \\)"
+                ],
+                kunci: "\\( \\{y \\mid y \\ge -4, y \\in \\mathbb{R}\\} \\)"
+            },
+            {
+                paket: 'A', tipe: 'Mudah', bobot: 1,
+                teks: "Fungsi \\( f(x) = 7 \\) untuk setiap \\( x \\) anggota domainnya disebut ....",
+                opsi: [
+                    "fungsi konstan",
+                    "fungsi linear",
+                    "fungsi kuadrat",
+                    "fungsi identitas",
+                    "fungsi modulus"
+                ],
+                kunci: "fungsi konstan"
+            },
+            {
+                paket: 'A', tipe: 'HOTS', bobot: 3,
+                teks: "Diketahui \\( f(x) = x^3 - 4x \\). Fungsi \\( f(x) \\) tersebut termasuk ....",
+                opsi: [
+                    "fungsi ganjil",
+                    "fungsi genap",
+                    "bukan fungsi genap maupun fungsi ganjil",
+                    "fungsi konstan",
+                    "fungsi identitas"
+                ],
+                kunci: "fungsi ganjil"
+            },
+            {
+                paket: 'A', tipe: 'Sedang', bobot: 2,
+                teks: "Perhatikan diagram panah fungsi \\( f : A \\to B \\) berikut.<br>" + svgRelasi2 + "<br>Fungsi f tersebut bersifat ....",
+                opsi: [
+                    "injektif saja",
+                    "surjektif saja",
+                    "bijektif",
+                    "bukan fungsi",
+                    "bukan injektif dan bukan surjektif"
+                ],
+                kunci: "injektif saja"
+            },
+            {
+                paket: 'A', tipe: 'Sedang', bobot: 2,
+                teks: "Diketahui fungsi \\( f : A \\to B \\) dengan \\( A = \\{1, 2, 3\\} \\) dan \\( B = \\{2, 4, 6\\} \\), serta \\( f(x) = 2x \\). Pernyataan yang tepat mengenai fungsi \\( f \\) tersebut adalah ....",
+                opsi: [
+                    "f bersifat bijektif karena injektif sekaligus surjektif",
+                    "f hanya bersifat injektif, tidak surjektif",
+                    "f hanya bersifat surjektif, tidak injektif",
+                    "f bukan fungsi karena ada anggota B yang tidak berpasangan",
+                    "f bersifat fungsi konstan"
+                ],
+                kunci: "f bersifat bijektif karena injektif sekaligus surjektif"
+            },
+            {
+                paket: 'A', tipe: 'HOTS', bobot: 3,
+                teks: "Diketahui fungsi rasional \\( f(x) = \\frac{1}{x - 2} + 3 \\). Asimtot tegak dan asimtot datar dari fungsi tersebut berturut-turut adalah ....",
+                opsi: [
+                    "\\( x = 2 \\) dan \\( y = 3 \\)",
+                    "\\( x = -2 \\) dan \\( y = 3 \\)",
+                    "\\( x = 2 \\) dan \\( y = -3 \\)",
+                    "\\( x = 3 \\) dan \\( y = 2 \\)",
+                    "\\( x = -3 \\) dan \\( y = -2 \\)"
+                ],
+                kunci: "\\( x = 2 \\) dan \\( y = 3 \\)"
+            },
+            
+            // PAKET B
+            {
+                paket: 'B', tipe: 'Mudah', bobot: 1,
+                teks: "Dari pernyataan berikut, manakah syarat utama suatu relasi dari himpunan A ke himpunan B dapat disebut sebagai fungsi?",
+                opsi: [
+                    "Setiap anggota himpunan A dipasangkan dengan tepat satu anggota di himpunan B.",
+                    "Setiap anggota himpunan B harus memiliki pasangan di himpunan A.",
+                    "Boleh ada anggota himpunan A yang memiliki lebih dari satu pasangan di B.",
+                    "Himpunan A dan himpunan B harus memiliki jumlah anggota yang sama.",
+                    "Domain dan kodomainnya harus berupa bilangan bulat."
+                ],
+                kunci: "Setiap anggota himpunan A dipasangkan dengan tepat satu anggota di himpunan B."
+            },
+            {
+                paket: 'B', tipe: 'Mudah', bobot: 1,
+                teks: "Jika \\( P = \\{2, 3, 4\\} \\) dan \\( Q = \\{4, 9, 16, 25\\} \\). Relasi \"akar kuadrat dari\" himpunan P ke himpunan Q adalah ....",
+                opsi: [
+                    "\\( \\{(2, 4), (3, 9), (4, 16)\\} \\)",
+                    "\\( \\{(4, 2), (9, 3), (16, 4)\\} \\)",
+                    "\\( \\{(2, 2), (3, 3), (4, 4)\\} \\)",
+                    "\\( \\{(2, 8), (3, 27), (4, 64)\\} \\)",
+                    "\\( \\{(4, 16), (9, 25)\\} \\)"
+                ],
+                kunci: "\\( \\{(2, 4), (3, 9), (4, 16)\\} \\)"
+            },
+            {
+                paket: 'B', tipe: 'Sedang', bobot: 2,
+                teks: "Perhatikan diagram panah relasi dari himpunan A ke himpunan B berikut. <br>" + svgRelasi2 + "<br>Apakah diagram di atas merupakan fungsi?",
+                opsi: [
+                    "Ya, karena setiap anggota himpunan A dipasangkan tepat satu dengan anggota himpunan B",
+                    "Bukan, karena ada anggota himpunan B yang tidak memiliki pasangan",
+                    "Ya, karena semua anggota B memiliki pasangan",
+                    "Bukan, karena ada anggota A yang tidak memiliki pasangan",
+                    "Bukan, karena anggota A bercabang"
+                ],
+                kunci: "Ya, karena setiap anggota himpunan A dipasangkan tepat satu dengan anggota himpunan B"
+            },
+            {
+                paket: 'B', tipe: 'Mudah', bobot: 1,
+                teks: "Pada sebuah fungsi \\( f: X \\to Y \\), himpunan Y disebut sebagai ....",
+                opsi: [
+                    "Kodomain",
+                    "Domain",
+                    "Range",
+                    "Pemetaan",
+                    "Relasi"
+                ],
+                kunci: "Kodomain"
+            },
+            {
+                paket: 'B', tipe: 'Mudah', bobot: 1,
+                teks: "Diketahui \\( g(x) = 4 - 2x \\). Nilai dari \\( g(-3) \\) adalah ....",
+                opsi: ["10", "-2", "2", "-10", "8"],
+                kunci: "10"
+            },
+            {
+                paket: 'B', tipe: 'Sedang', bobot: 2,
+                teks: "Diketahui \\( f(x) = x^2 + 1 \\) dan \\( h(x) = 3x - 2 \\). Nilai dari \\( f(2) + h(1) \\) adalah ....",
+                opsi: ["6", "5", "7", "4", "8"],
+                kunci: "6"
+            },
+            {
+                paket: 'B', tipe: 'Sedang', bobot: 2,
+                teks: "Sebuah garis lurus memotong sumbu Y di titik (0, 3) dan memotong sumbu X di titik (-3, 0). Rumus fungsi linear garis tersebut adalah ....",
+                opsi: [
+                    "\\( f(x) = x + 3 \\)",
+                    "\\( f(x) = -x + 3 \\)",
+                    "\\( f(x) = 3x + 1 \\)",
+                    "\\( f(x) = x - 3 \\)",
+                    "\\( f(x) = 3x - 3 \\)"
+                ],
+                kunci: "\\( f(x) = x + 3 \\)"
+            },
+            {
+                paket: 'B', tipe: 'HOTS', bobot: 3,
+                teks: "Titik puncak (titik balik ekstrem) dari fungsi kuadrat \\( g(x) = -x^2 + 2x + 8 \\) adalah ....",
+                opsi: [
+                    "\\( (1, 9) \\)",
+                    "\\( (-1, 9) \\)",
+                    "\\( (1, -9) \\)",
+                    "\\( (-1, -9) \\)",
+                    "\\( (2, 8) \\)"
+                ],
+                kunci: "\\( (1, 9) \\)"
+            },
+            {
+                paket: 'B', tipe: 'Sedang', bobot: 2,
+                teks: "Domain (daerah asal) dari fungsi berbentuk pecahan \\( f(x) = \\frac{2x+1}{x - 5} \\) adalah ....",
+                opsi: [
+                    "\\( \\{x \\mid x \\neq 5, x \\in \\mathbb{R}\\} \\)",
+                    "\\( \\{x \\mid x \\neq -5, x \\in \\mathbb{R}\\} \\)",
+                    "\\( \\{x \\mid x > 5, x \\in \\mathbb{R}\\} \\)",
+                    "\\( \\{x \\mid x \\neq 0, x \\in \\mathbb{R}\\} \\)",
+                    "\\( \\{x \\mid x \\in \\mathbb{R}\\} \\)"
+                ],
+                kunci: "\\( \\{x \\mid x \\neq 5, x \\in \\mathbb{R}\\} \\)"
+            },
+            {
+                paket: 'B', tipe: 'HOTS', bobot: 3,
+                teks: "Jika fungsi kuadrat terbuka ke bawah (a < 0) dan memiliki titik puncak di \\( (3, 5) \\), maka daerah hasil (range) dari fungsi tersebut adalah ....",
+                opsi: [
+                    "\\( \\{y \\mid y \\le 5, y \\in \\mathbb{R}\\} \\)",
+                    "\\( \\{y \\mid y \\ge 5, y \\in \\mathbb{R}\\} \\)",
+                    "\\( \\{y \\mid y \\le 3, y \\in \\mathbb{R}\\} \\)",
+                    "\\( \\{y \\mid y \\ge 3, y \\in \\mathbb{R}\\} \\)",
+                    "\\( \\{y \\mid y \\in \\mathbb{R}\\} \\)"
+                ],
+                kunci: "\\( \\{y \\mid y \\le 5, y \\in \\mathbb{R}\\} \\)"
+            },
+            {
+                paket: 'B', tipe: 'Mudah', bobot: 1,
+                teks: "Fungsi yang memetakan setiap anggota domain ke dirinya sendiri, yaitu \\( f(x) = x \\), disebut dengan ....",
+                opsi: [
+                    "Fungsi identitas",
+                    "Fungsi konstan",
+                    "Fungsi linear",
+                    "Fungsi ganjil",
+                    "Fungsi genap"
+                ],
+                kunci: "Fungsi identitas"
+            },
+            {
+                paket: 'B', tipe: 'HOTS', bobot: 3,
+                teks: "Fungsi \\( f(x) = 2x^2 + 5 \\) jika diuji dengan \\( f(-x) \\) akan menghasilkan nilai yang sama dengan \\( f(x) \\). Oleh karena itu fungsi ini dikategorikan sebagai ....",
+                opsi: [
+                    "Fungsi genap",
+                    "Fungsi ganjil",
+                    "Fungsi injektif",
+                    "Fungsi konstan",
+                    "Bukan fungsi genap atau ganjil"
+                ],
+                kunci: "Fungsi genap"
+            },
+            {
+                paket: 'B', tipe: 'Sedang', bobot: 2,
+                teks: "Jika daerah hasil (range) sama dengan daerah kawan (kodomain), maka fungsi tersebut disebut fungsi ....",
+                opsi: [
+                    "Surjektif (onto)",
+                    "Injektif (satu-satu)",
+                    "Bijektif (korespondensi satu-satu)",
+                    "Identitas",
+                    "Konstan"
+                ],
+                kunci: "Surjektif (onto)"
+            },
+            {
+                paket: 'B', tipe: 'Sedang', bobot: 2,
+                teks: "Sebuah fungsi memetakan \\( A = \\{a, b, c\\} \\) ke \\( B = \\{1, 2, 3\\} \\) dengan himpunan pasangan berurutan \\( \\{(a, 2), (b, 3), (c, 1)\\} \\). Sifat fungsi ini adalah ....",
+                opsi: [
+                    "Bijektif (Injektif sekaligus Surjektif)",
+                    "Hanya Injektif",
+                    "Hanya Surjektif",
+                    "Bukan fungsi",
+                    "Fungsi konstan"
+                ],
+                kunci: "Bijektif (Injektif sekaligus Surjektif)"
+            },
+            {
+                paket: 'B', tipe: 'HOTS', bobot: 3,
+                teks: "Fungsi rasional berbentuk \\( f(x) = \\frac{2x+3}{x-4} \\). Asimtot datar dari fungsi tersebut adalah garis ....",
+                opsi: [
+                    "\\( y = 2 \\)",
+                    "\\( x = 4 \\)",
+                    "\\( y = 4 \\)",
+                    "\\( x = 2 \\)",
+                    "\\( y = -2 \\)"
+                ],
+                kunci: "\\( y = 2 \\)"
+            }
+        ];
+
+        let userData = {};
+        let activeQuestions = [];
+        let currentQuestionIndex = 0;
+        let userAnswers = {}; 
+        let examTimer;
+        let timeLeft = 35 * 60; 
+        let totalWeight = 0;
+        let cheatAttempts = 0;
+        let examActive = false;
+
+        document.addEventListener("visibilitychange", () => {
+            if (examActive && document.visibilityState === 'hidden') {
+                cheatAttempts++;
+                showCheatWarning();
+            }
+        });
+
+        function showCheatWarning() {
+            document.getElementById('cheatWarningModal').classList.remove('hidden');
+            document.getElementById('cheatWarningModal').classList.add('flex');
+            
+            if (cheatAttempts > 2) {
+                alert("PELANGGARAN MAKSIMAL! Ujian dihentikan dan nilai Anda dibatalkan (0).");
+                forceSubmitZero();
+            }
+        }
+
+        function dismissCheatWarning() {
+            document.getElementById('cheatWarningModal').classList.add('hidden');
+            document.getElementById('cheatWarningModal').classList.remove('flex');
+        }
+
+        function forceSubmitZero() {
+            examActive = false;
+            clearInterval(examTimer);
+            sendToSpreadsheet(0);
+        }
+
+        function showScreen(screenId) {
+            ['warningScreen', 'loginScreen', 'examScreen', 'loadingScreen', 'resultScreen'].forEach(id => {
+                document.getElementById(id).classList.add('hidden');
+                document.getElementById(id).classList.remove('flex');
+            });
+            const screen = document.getElementById(screenId);
+            screen.classList.remove('hidden');
+            screen.classList.add('flex');
+        }
+
+        function acceptWarning() {
+            if (!document.getElementById('jujurCheckbox').checked) {
+                alert("Anda harus menceklis kotak janji jujur terlebih dahulu!");
+                return;
+            }
+            showScreen('loginScreen');
+        }
+
+        function shuffleArray(array) {
+            let arr = [...array];
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        function startExam(e) {
+            e.preventDefault();
+            
+            const token = document.getElementById('token').value.toUpperCase().trim();
+            const session1Token = 'MATHASOY123';
+            const session2Token = 'SERUMATH456';
+
+            if (token !== session1Token && token !== session2Token) {
+                alert("TOKEN SALAH! Silakan minta token yang benar kepada pengawas.");
+                return;
+            }
+
+            userData = {
+                nama: document.getElementById('nama').value,
+                kelas: document.getElementById('kelas').value,
+                absen: document.getElementById('absen').value,
+                paket: document.getElementById('paket').value
+            };
+
+            let filteredQuestions = bankSoal.filter(q => q.paket === userData.paket);
+            totalWeight = filteredQuestions.reduce((sum, q) => sum + q.bobot, 0);
+            activeQuestions = shuffleArray(filteredQuestions);
+            
+            activeQuestions.forEach(q => {
+                q.opsiDiacak = shuffleArray([...q.opsi]);
+            });
+
+            document.getElementById('displayPaket').innerText = userData.paket;
+            document.getElementById('displayNamaKelas').innerText = `${userData.nama} | ${userData.kelas} | Absen: ${userData.absen}`;
+
+            examActive = true;
+            showScreen('examScreen');
+            renderNavigation();
+            loadQuestion(0);
+            startTimer();
+        }
+
+        function loadQuestion(index) {
+            currentQuestionIndex = index;
+            const q = activeQuestions[index];
+            
+            document.getElementById('questionNumberDisplay').innerText = index + 1;
+            
+            const diffEl = document.getElementById('questionDifficulty');
+            const weightEl = document.getElementById('questionWeight');
+            diffEl.innerText = q.tipe;
+            weightEl.innerText = `Bobot Nilai: ${q.bobot}`;
+
+            if(q.tipe === 'Mudah') {
+                diffEl.className = 'px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-700';
+            } else if(q.tipe === 'Sedang') {
+                diffEl.className = 'px-3 py-1 rounded-full text-xs font-bold bg-blue-100 text-blue-700';
+            } else {
+                diffEl.className = 'px-3 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-700';
+            }
+
+            document.getElementById('questionContent').innerHTML = q.teks;
+            const optionsContainer = document.getElementById('optionsContainer');
+            optionsContainer.innerHTML = '';
+            const labels = ['A', 'B', 'C', 'D', 'E'];
+            
+            q.opsiDiacak.forEach((optText, i) => {
+                const encodedOpt = encodeURIComponent(optText);
+                const isChecked = userAnswers[index] === optText ? 'checked' : '';
+                
+                const html = `
+                <label class="relative block cursor-pointer group">
+                    <input type="radio" name="answer_${index}" value="${encodedOpt}" class="peer sr-only radio-custom" onchange="saveAnswer(${index}, '${encodedOpt}')" ${isChecked}>
+                    <div class="flex items-center p-4 md:p-5 border-2 border-gray-100 rounded-xl hover:bg-gray-50 hover:border-gray-200 transition duration-200 bg-white">
+                        <div class="flex-shrink-0 w-8 h-8 rounded-full border-2 border-gray-300 flex items-center justify-center mr-4 radio-circle transition duration-200 group-hover:border-blue-400">
+                            <span class="text-sm font-bold text-gray-500 peer-checked:text-white">${labels[i]}</span>
+                        </div>
+                        <div class="text-gray-700 text-sm md:text-base flex-grow font-medium leading-relaxed">${optText}</div>
+                    </div>
+                </label>
+                `;
+                optionsContainer.insertAdjacentHTML('beforeend', html);
+            });
+
+            document.getElementById('btnPrev').disabled = index === 0;
+            const btnNext = document.getElementById('btnNext');
+            if (index === activeQuestions.length - 1) {
+                btnNext.innerHTML = 'Selesai <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>';
+                btnNext.className = 'flex items-center px-6 py-3 bg-emerald-600 border border-transparent rounded-xl text-white font-bold hover:bg-emerald-700 transition shadow-md shadow-emerald-500/30';
+            } else {
+                btnNext.innerHTML = 'Selanjutnya <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>';
+                btnNext.className = 'flex items-center px-6 py-3 bg-blue-600 border border-transparent rounded-xl text-white font-bold hover:bg-blue-700 transition shadow-md shadow-blue-500/30';
+            }
+
+            if (window.MathJax && window.MathJax.typesetPromise) {
+                MathJax.typesetPromise([document.getElementById('questionContent'), document.getElementById('optionsContainer')]).catch(err => console.log('Math error:', err));
+            }
+            
+            updateNavUI();
+        }
+
+        function saveAnswer(qIndex, encodedVal) {
+            userAnswers[qIndex] = decodeURIComponent(encodedVal);
+            updateNavUI();
+        }
+
+        function nextQuestion() {
+            if (currentQuestionIndex < activeQuestions.length - 1) {
+                loadQuestion(currentQuestionIndex + 1);
+            } else {
+                confirmSubmit();
+            }
+        }
+
+        function prevQuestion() {
+            if (currentQuestionIndex > 0) {
+                loadQuestion(currentQuestionIndex - 1);
+            }
+        }
+
+        function renderNavigation() {
+            const grid = document.getElementById('navigationGrid');
+            grid.innerHTML = '';
+            activeQuestions.forEach((_, i) => {
+                const btn = document.createElement('button');
+                btn.innerText = i + 1;
+                btn.id = `nav-btn-${i}`;
+                btn.className = `nav-btn w-10 h-10 rounded-xl font-bold border-2 border-gray-100 text-gray-500 hover:bg-gray-50 flex items-center justify-center`;
+                btn.onclick = () => loadQuestion(i);
+                grid.appendChild(btn);
+            });
+        }
+
+        function updateNavUI() {
+            let answered = 0;
+            activeQuestions.forEach((_, i) => {
+                const btn = document.getElementById(`nav-btn-${i}`);
+                btn.className = `nav-btn w-10 h-10 rounded-xl font-bold border-2 flex items-center justify-center transition-colors`;
+                
+                if (i === currentQuestionIndex) {
+                    btn.classList.add('border-blue-500', 'bg-blue-500', 'text-white', 'shadow-md', 'shadow-blue-200');
+                } else if (userAnswers[i] !== undefined) {
+                    btn.classList.add('border-emerald-500', 'bg-emerald-500', 'text-white');
+                    answered++;
+                } else {
+                    btn.classList.add('border-gray-200', 'text-gray-500', 'bg-white', 'hover:bg-gray-50');
+                }
+            });
+            
+            document.getElementById('countAnswered').innerText = answered;
+            document.getElementById('countUnanswered').innerText = activeQuestions.length - answered;
+        }
+
+        function startTimer() {
+            examTimer = setInterval(() => {
+                if (timeLeft <= 0) {
+                    clearInterval(examTimer);
+                    alert("Waktu Ujian Habis! Sistem akan mengumpulkan jawaban Anda secara otomatis.");
+                    processSubmission();
+                    return;
+                }
+                timeLeft--;
+                const m = Math.floor(timeLeft / 60).toString().padStart(2, '0');
+                const s = (timeLeft % 60).toString().padStart(2, '0');
+                document.getElementById('timer').innerText = `${m}:${s}`;
+                
+                if (timeLeft < 300) { 
+                    document.getElementById('timer').classList.replace('text-gray-800', 'text-red-600');
+                    document.getElementById('timer').parentElement.classList.add('alert-pulse');
+                }
+            }, 1000);
+        }
+
+        function confirmSubmit() {
+            let unanswered = activeQuestions.length - Object.keys(userAnswers).length;
+            let msg = unanswered > 0 
+                ? `PERINGATAN!\nMasih ada ${unanswered} soal yang BELUM DIJAWAB.\nYakin ingin mengumpulkan ujian sekarang?` 
+                : "Anda sudah menjawab seluruh soal. Yakin ingin mengumpulkan ujian?";
+            
+            if (confirm(msg)) {
+                processSubmission();
+            }
+        }
+
+        function processSubmission() {
+            examActive = false;
+            clearInterval(examTimer);
+            
+            let poinDiperoleh = 0;
+            activeQuestions.forEach((q, index) => {
+                const jawabanUser = userAnswers[index];
+                if (jawabanUser && jawabanUser === q.kunci) {
+                    poinDiperoleh += q.bobot;
+                }
+            });
+
+            let skorAkhir = Math.round((poinDiperoleh / totalWeight) * 100);
+            
+            sendToSpreadsheet(skorAkhir);
+        }
+
+        // FUNGSI BARU: Mengirim data ke Google Script
+        function sendToSpreadsheet(skor) {
+            showScreen('loadingScreen'); // Tampilkan layar loading
+
+            if (GOOGLE_SCRIPT_URL === "MASUKKAN_URL_WEB_APP_DISINI") {
+                // Jika URL belum disetting oleh guru, langsung tampilkan nilai saja
+                setTimeout(() => showResult(skor), 1000);
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('nama', userData.nama);
+            formData.append('kelas', userData.kelas);
+            formData.append('absen', userData.absen);
+            formData.append('paket', userData.paket);
+            formData.append('skor', skor);
+            formData.append('cheat', cheatAttempts); // Catat jumlah pelanggaran
+
+            fetch(GOOGLE_SCRIPT_URL, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                showResult(skor);
+            })
+            .catch(error => {
+                console.error('Error!', error.message);
+                alert("Ada gangguan jaringan saat mengirim data, namun nilai Anda berhasil dihitung.");
+                showResult(skor);
+            });
+        }
+
+        function showResult(score) {
+            showScreen('resultScreen');
+            document.getElementById('resName').innerText = userData.nama;
+            
+            if(cheatAttempts > 2) {
+                document.getElementById('resScore').className = "text-7xl font-black text-red-500 relative z-10";
+            }
+            
+            let counter = 0;
+            let timer = setInterval(() => {
+                counter += 2; 
+                if(counter >= score) {
+                    clearInterval(timer);
+                    document.getElementById('resScore').innerText = score;
+                } else {
+                    document.getElementById('resScore').innerText = counter;
+                }
+            }, 30);
+        }
+
+        document.addEventListener('contextmenu', event => event.preventDefault());
+        document.onkeydown = function(e) {
+            if (e.key === "F12") return false;
+            if (e.ctrlKey && e.shiftKey && (e.key === "I" || e.key === "J" || e.key === "C")) return false;
+            if (e.ctrlKey && e.key === "U") return false;
+        };
+    </script>
+</body>
+</html>
